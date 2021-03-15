@@ -1,0 +1,176 @@
+<html>
+<head>
+  <style>
+  * {box-sizing: border-box;}
+
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
+
+  .center {
+  margin: auto;
+  width: 50%;
+  border: 3px solid black;
+  padding: 10px;
+  }
+
+  .topnav {
+    overflow: hidden;
+    background-color: black;
+  }
+
+  .topnav a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    font-size: 18px;
+  }
+
+  .topnav a:hover {
+    background-color: black;
+    color: black;
+  }
+
+  .topnav a.active {
+    background-color: black;
+    color: white;
+  }
+
+  .topnav input[type=text] {
+    float: left;
+    padding: 6px;
+    margin-top: 8px;
+    margin-right: 16px;
+    border: none;
+    font-size: 17px;
+  }
+
+  @media screen and (max-width: 600px) {
+    .topnav a, .topnav input[type=text] {
+      float: none;
+      display: block;
+      text-align: left;
+      width: 100%;
+      margin: 0;
+      padding: 14px;
+    }
+
+    .topnav input[type=text] {
+      border: 1px solid #ccc;
+    }
+  }
+  </style>
+  </head>
+  <body>
+
+  <form action="http://localhost:8000/getinput" method="POST">
+    <div style="padding-left:16px" class="topnav">
+      <input type="text" name="input" id="input" placeholder="search">
+      <input type="submit" value="Enter"></button>
+    </div>
+  </form>
+<!--
+  <form action="http://localhost:8000/refresh" method="GET">
+    <input type="submit" value="Refresh"></button>
+  </form>
+-->
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    var test = 0;
+
+    function test() {
+      Math.floor(Math.random() * 10) + 10;
+    }
+
+    function drawChart() {
+      var xhr = new XMLHttpRequest();
+      // we defined the xhr
+      xhr.open('GET', "http://localhost:8000/getprice", true);
+      xhr.send();
+
+      xhr.onreadystatechange = function () {
+        if (this.readyState != 4) return;
+
+          if (this.status == 200) {
+            // we get the returned data
+
+            const contents = this.responseText.split("\n");
+            //const contents = contents.split("\n");
+
+            var left = 0;
+            var right = contents[24];
+            while(left < right) {
+              var temp = contents[left];
+              contents[left] = contents[right];
+              contents[right] = temp;
+              left++;
+              right--;
+            }
+            left = contents[24];
+            right = 23;
+            while(left < right) {
+              var temp = contents[left];
+              contents[left] = contents[right];
+              contents[right] = temp;
+              left++;
+              right--;
+            }
+
+              var data = google.visualization.arrayToDataTable([
+                ['Hour', 'Previously'],
+                ['t', parseInt(contents[0])],
+                ['t-01', parseInt(contents[1])],
+                ['t-02', parseInt(contents[2])],
+                ['t-03', parseInt(contents[3])],
+                ['t-04', parseInt(contents[4])],
+                ['t-05', parseInt(contents[5])],
+                ['t-06', parseInt(contents[6])],
+                ['t-07', parseInt(contents[7])],
+                ['t-08', parseInt(contents[8])],
+                ['t-09', parseInt(contents[9])],
+                ['t-10', parseInt(contents[10])],
+                ['t-11', parseInt(contents[11])],
+                ['t-12', parseInt(contents[12])],
+                ['t-13', parseInt(contents[13])],
+                ['t-14', parseInt(contents[14])],
+                ['t-15', parseInt(contents[15])],
+                ['t-16', parseInt(contents[16])],
+                ['t-17', parseInt(contents[17])],
+                ['t-18', parseInt(contents[18])],
+                ['t-19', parseInt(contents[19])],
+                ['t-20', parseInt(contents[20])],
+                ['t-21', parseInt(contents[21])],
+                ['t-22', parseInt(contents[22])],
+                ['t-23', parseInt(contents[23])],
+              ]);
+
+              var options = {
+                title: 'Item Price in ₽:',
+                curveType: 'function',
+                legend: { position: 'bottom' }
+              };
+
+              var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+
+              chart.draw(data, options);
+
+            }
+          };
+
+          // end of state change: it can be after some time (async)
+      }
+  </script>
+
+</head>
+<body>
+  <div class="center" id="curve_chart" style="width: 100%; height: 95%"></div>
+</body>
+</html>

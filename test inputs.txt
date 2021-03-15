@@ -1,0 +1,14 @@
+*succeed*
+Documents case
+Zibbo Lighter
+Graphics Card
+Powerbank
+CPU Fan
+pieceofplexiglas
+Cottage safe key
+Secure Flash drive
+
+*fail*
+Factory Exit Key
+SSD Drive
+REAP-ir
