@@ -33,10 +33,6 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
-app.get('/refresh', (req, res) => {
-  location.reload();
-});
-
 app.listen(8000, () => {
   console.log(`Server running on port 8000`);
 });
