@@ -33,6 +33,10 @@ app.get('/', (req, res) => {
   res.render('index');
 });
 
+app.get('/library', (req, res) => {
+  res.render('library');
+});
+
 app.listen(8000, () => {
   console.log(`Server running on port 8000`);
 });
