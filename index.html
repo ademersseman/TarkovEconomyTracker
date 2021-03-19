@@ -9,16 +9,10 @@
     font-family: Arial, Helvetica, sans-serif;
   }
 
-  .center {
-  margin: auto;
-  width: 50%;
-  border: 3px solid black;
-  padding: 10px;
-  }
-
   .topnav {
+    background-color: #ccc;
+    position: relative;
     overflow: hidden;
-    background-color: black;
   }
 
   .topnav a {
@@ -38,7 +32,6 @@
 
   .topnav a.active {
     background-color: black;
-    color: white;
   }
 
   .topnav input[type=text] {
@@ -110,6 +103,11 @@
     opacity: 1; /* Firefox */
   }
 
+  ::placeholder:hover {
+    color: black;
+    opacity: 1; /* Firefox */
+  }
+
   .text:hover {
     background-color: #ccc;
     color: black;
@@ -117,30 +115,30 @@
 
   .text:focus {
    border-color:transparent;
-   outline:none;
+   outline: none;
+   color: black;
   }
 
-  .topnav {
-    background-color: #ccc;
-    position: relative;
-    overflow: hidden;
+  form {
+    display: inline-block; //Or display: inline;
   }
 
   </style>
   </head>
   <body>
 
-  <div style="padding-left:16px" class="topnav">
+<div style="padding-left:16px" class="topnav">
   <form action="http://localhost:8000/getinput" method="POST">
       <input type="text" class="text" name="input" id="input" placeholder="search..">
-      <input type="submit" class="button" value="Enter"></button>
+      <input type="submit" class="button" value="Enter">
   </form>
   <form action="http://localhost:8000" method="GET">
-    <input type="submit" class="button" value="Render"></button>
+    <input type="submit" class="button" value="Render">
+  </form>
+  <form action="http://localhost:8000/library" method="GET">
+    <input type="submit" style="margin-left: 660%" class="button" value="View library of items">
   </form>
 </div>
-
-  </div>
 
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <script type="text/javascript">
@@ -214,8 +212,8 @@
               ]);
 
               var options = {
-                vAxis: {title: "price"},
-                hAxis: {title: "time"},
+                vAxis: {title: "Price in ₽"},
+                hAxis: {title: "Time since search"},
                 colors: ['blue'],
                 title: 'Item Price in ₽:',
                 curveType: 'function',
@@ -240,7 +238,6 @@
       }
   </script>
 
-</head>
   <div id="curve_chart" style="width: 100%; height: 100%"></div>
 </body>
 </html>
