@@ -1,5 +1,6 @@
 from __future__ import print_function
 import os.path
+import time
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
@@ -51,5 +52,8 @@ def main():
             file.write(row[0] + '\n')
     file.close()
 
-if __name__ == '__main__':
-    main()
+while True:
+    if __name__ == '__main__':
+        print('I updated hourlyprice.txt')
+        main()
+    time.sleep(60)

@@ -92,17 +92,13 @@ int binarySearch(item arr[], char userInput[]) {
   while(r > l) {
     m = l + (r - l)/2;
     guess = &arr[m];
-    printf("\n\nthe best guess is: %s", guess->name);
-    printf("The strcmp output is: %d\n", strncmp(guess->name, userInput, 19));
     for (int i = 0; i < 50; i++) {
       if (guess->name[i] == '\0') {
-        printf("has a null char at: %d", i);
         break;
       }
     }
     for (int i = 0; i < 50; i++) {
       if (userInput[i] == '\0') {
-        printf("\nand has a null char at: %d", i);
         break;
       }
     }
@@ -182,7 +178,6 @@ int main() {
 
     char userInput[50];
     if (fscanf(fp,"%s",&userInput) != EOF) {
-        printf("\nThe item in userInput.txt is:%s", userInput);
 
         fclose(fp);
         searching++;
@@ -194,7 +189,6 @@ int main() {
         printf("\nThe item I found is: %s", current->name);
         fp = fopen("programoutput.txt", "w");
         for (int i = 0; i < 24; i++) {
-          printf("\nloading current output: %d", current->price[i]);
           fprintf(fp, "%d\n", current->price[i]);
         }
         fclose(fp);
