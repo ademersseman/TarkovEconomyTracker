@@ -56,4 +56,4 @@ while True:
     if __name__ == '__main__':
         print('I updated hourlyprice.txt')
         main()
-    time.sleep(60)
+    time.sleep(3)

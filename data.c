@@ -168,6 +168,7 @@ int main() {
       }
       fp = fopen("currenthour.txt", "w");
       fprintf(fp, "%d", currentHour);
+      printf("\nsecure flash drive price downloaded: %d", items[0].price[currentHour]);
       currentHour++;
       printf("\nSuccessfully logged the price this hour!");
       fclose(fp);
