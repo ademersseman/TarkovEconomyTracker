@@ -13,21 +13,20 @@ FILE *fp;//used to open the various files
 void itemcpy(item *a,  item *b) {
   memcpy(a, b, sizeof(char) * 50 + sizeof(int) * 24);
 }
-
-//performs merge sort
+//Splits items[] in the middle performs one selection sort while merging
 void merge(item items[], int l, int m, int r) {
   int i, j, k;
-  int n1 = m - l + 1;
-  int n2 = r - m;
+  int leftIndex = m - l + 1;
+  int rightIndex = r - m;
 
   //create temp arrays
-  item L[n1], R[n2];
+  item L[leftIndex], R[rightIndex];
 
   //Copy data to temp arrays L[] and R[]
-  for (i = 0; i < n1; i++) {
+  for (i = 0; i < leftIndex; i++) {
     itemcpy(&L[i], &items[l + i]);
   }
-  for (j = 0; j < n2; j++) {
+  for (j = 0; j < rightIndex; j++) {
     itemcpy(&R[j], &items[m + 1 + j]);
   }
 
@@ -35,7 +34,7 @@ void merge(item items[], int l, int m, int r) {
   i = 0; // index for left array
   j = 0; // index for right array
   k = l; // index of merged array
-  while (i < n1 && j < n2) {
+  while (i < leftIndex && j < rightIndex) {
     if (strcmp(L[i].name, R[j].name) <= 0) {
       itemcpy(&items[k], &L[i]);
       i++;
@@ -48,14 +47,14 @@ void merge(item items[], int l, int m, int r) {
   }
 
   // Copy elements of left array
-  while (i < n1) {
+  while (i < leftIndex) {
     itemcpy(&items[k], &L[i]);
     i++;
     k++;
   }
 
   // Copy elements of right array
-  while (j < n2) {
+  while (j < rightIndex) {
     itemcpy(&items[k], &R[j]);
     j++;
     k++;
@@ -67,7 +66,7 @@ void mergeSort(item items[], int l, int r)
   if (l < r) {
     int m = l + (r - l) / 2;//middle of the new array
 
-    // Sort first and second halves
+    //Sorts both halves
     mergeSort(items, l, m);
     mergeSort(items, m + 1, r);
 
@@ -167,7 +166,6 @@ int main() {
         searching++;
 
         mergeSort(items, 0, 2157);
-        printDatabase(items);
 
         item *current = &items[binarySearch(items, userInput)];//current item the user selected
         printf("\nThe item I found is: %s", current->name);
