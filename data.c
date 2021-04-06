@@ -3,112 +3,92 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-typedef struct item {
+typedef struct item {//each item in the game has a name and 24 prices
    int price[24];
    char name[50];
 } item;
+FILE *fp;//used to open the various files
 
-int x = 0;
-void printNames(item arr[]) {
-  for (int i = 0; i < 2158; i++) {
-    printf("%s", arr[i].name);
-  }
-}
-
+//copies content from one item to another
 void itemcpy(item *a,  item *b) {
   memcpy(a, b, sizeof(char) * 50 + sizeof(int) * 24);
 }
 
-void merge(item arr[], int l, int m, int r) {
+//performs merge sort
+void merge(item items[], int l, int m, int r) {
   int i, j, k;
   int n1 = m - l + 1;
   int n2 = r - m;
 
-  /* create temp arrays */
+  //create temp arrays
   item L[n1], R[n2];
 
-  /* Copy data to temp arrays L[] and R[] */
+  //Copy data to temp arrays L[] and R[]
   for (i = 0; i < n1; i++) {
-    itemcpy(&L[i], &arr[l + i]);
+    itemcpy(&L[i], &items[l + i]);
   }
   for (j = 0; j < n2; j++) {
-    itemcpy(&R[j], &arr[m + 1 + j]);
+    itemcpy(&R[j], &items[m + 1 + j]);
   }
 
-  /* Merge the temp arrays back into arr[l..r]*/
-  i = 0; // Initial index of first subarray
-  j = 0; // Initial index of second subarray
-  k = l; // Initial index of merged subarray
+  //Merge the temp arrays back into arr[l..r]
+  i = 0; // index for left array
+  j = 0; // index for right array
+  k = l; // index of merged array
   while (i < n1 && j < n2) {
-    if (strcmp(L[i].name, R[j].name) <= 0/*L[i] <= R[j]*/) {
-      itemcpy(&arr[k], &L[i]);
+    if (strcmp(L[i].name, R[j].name) <= 0) {
+      itemcpy(&items[k], &L[i]);
       i++;
     }
     else {
-      itemcpy(&arr[k], &R[j]);
+      itemcpy(&items[k], &R[j]);
       j++;
     }
     k++;
   }
 
-  /* Copy the remaining elements of L[], if there
-  are any */
+  // Copy elements of left array
   while (i < n1) {
-    itemcpy(&arr[k], &L[i]);
+    itemcpy(&items[k], &L[i]);
     i++;
     k++;
   }
 
-  /* Copy the remaining elements of R[], if there
-  are any */
+  // Copy elements of right array
   while (j < n2) {
-    itemcpy(&arr[k], &R[j]);
+    itemcpy(&items[k], &R[j]);
     j++;
     k++;
   }
 }
 
-/* l is for left index and r is right index of the
-sub-array of arr to be sorted */
-void mergeSort(item arr[], int l, int r)
+void mergeSort(item items[], int l, int r)
 {
   if (l < r) {
-    // Same as (l+r)/2, but avoids overflow for
-    // large l and h
-    int m = l + (r - l) / 2;
+    int m = l + (r - l) / 2;//middle of the new array
 
     // Sort first and second halves
-    mergeSort(arr, l, m);
-    mergeSort(arr, m + 1, r);
+    mergeSort(items, l, m);
+    mergeSort(items, m + 1, r);
 
-    merge(arr, l, m, r);
+    merge(items, l, m, r);
   }
 }
 
-int binarySearch(item arr[], char userInput[]) {
-  item *guess;
-  int l = 0, r = 2158, m;
+int binarySearch(item items[], char userInput[]) {
+  item *guess;// current guess
+  int l = 0, r = 2158, m;// defines bounds for search l for min, r for max, m for middle
   printf("\n");
-  while(r > l) {
-    m = l + (r - l)/2;
-    guess = &arr[m];
-    for (int i = 0; i < 50; i++) {
-      if (guess->name[i] == '\0') {
-        break;
-      }
-    }
-    for (int i = 0; i < 50; i++) {
-      if (userInput[i] == '\0') {
-        break;
-      }
-    }
+  while(r > l) {// if r < l then the search was unsuccessful: exited proper bounds
+    m = l + (r - l)/2;//sets middle or 'search' index
+    guess = &items[m];// sets guess to search index
 
-    if (strncmp(guess->name, userInput, 19) == 0) {
+    if (strncmp(guess->name, userInput, 19) == 0) {// the item is found
       printf("\nFOUND!");
       return m;
-    } else if (strncmp(guess->name, userInput, 19) >= 0) {
+    } else if (strncmp(guess->name, userInput, 19) >= 0) {// search is too high
       r = m;
-    } else if (strncmp(guess->name, userInput, 19) <= 0) {
+    } else if (strncmp(guess->name, userInput, 19) <= 0) {// search is too low
       l = m;
     }
   }
@@ -116,88 +96,89 @@ int binarySearch(item arr[], char userInput[]) {
   return m;
 }
 
+//print all the prices of this variable to programoutput.txt
+void printPriceToFile(item *current) {
+  for (int i = 0; i < 24; i++) {
+    fprintf(fp, "%d\n", current->price[i]);
+  }
+}
 
-void printDatabase(item arr[]) {
+//saves all prices from hourlyprice.txt to items[]
+void savePriceToItems(item items[], int currentHour) {
   for (int i = 0; i < 2158; i++) {
-    printf("\n%s", arr[i].name);
+    fscanf(fp, "%d", &items[i].price[currentHour]);
+  }
+}
+
+//saves all names from itemnames.txt to items[]
+void saveNamesToItems(item items[]) {
+  int index = 0;
+  while (fgets(items[index].name, 150, fp) != NULL) {
+    items[index].name[strlen(items[index].name) - 1] = '\0';
+    index++;
+  }
+}
+
+//prints the names in order for testing sort
+void printDatabase(item items[]) {
+  for (int i = 0; i < 2158; i++) {
+    printf("\n%s", items[i].name);
   }
 }
 
 int main() {
-  item items[2158];
+  item items[2158];//items[] of all 2158 items in the game
 
-//opens file
-  FILE *fp;
   fp = fopen("itemnames.txt", "r");
-//initialize the names of every item
-  int index = 0;
-  while (fgets(items[index].name, 150, fp) != NULL) {
-    int count = 0;
-    for (int i = 0; i < strlen(items[index].name); i++) {
-      if (items[index].name[i] != ' ') {
-        items[index].name[count++] = items[index].name[i];
-      }
-    }
-    items[index].name[count - 1] = '\0';
-    index++;
-  }
-  fp = fopen("programoutput.txt", "w");
+  saveNamesToItems(items);//initialize the names of every item
+  fp = fopen("programoutput.txt", "w");//wipes progress of previous runs
+  fp = fopen("userInput.txt", "w");//wipes progress of previous runs
   fclose(fp);
-/*
-  mergeSort(items, 0, 2157);
-
-  printf("\nresult:%d\n%s", binarySearch(items, "Secure Flash drive"), items[binarySearch(items, "Secure Flash drive")].name);
-  printf("Press ENTER key to Continue\n");
-  getchar();
-*/
 
   int seconds = 3600;//used to count the seconds
   int currentHour = 0;//keeps track of the current hour
   int searching = 0; //0 if not searching 1 if searching
   while(1) {
-    if (currentHour == 24) {
+    if (currentHour == 24) {//maintains 24-hour cycle
       currentHour = 0;
     }
 
-    if (seconds == 3600 && searching == 0) {//refresh and load prices
+    if (seconds == 3600 && searching == 0) {//runs every hour to upload prices to the items array
       seconds = 0;
       fp = fopen("hourlyprice.txt", "r");
+      savePriceToItems(items, currentHour);
 
-      for (int i = 0; i < 2158; i++) {
-        fscanf(fp, "%d", &items[i].price[currentHour]);
-      }
       fp = fopen("currenthour.txt", "w");
-      fprintf(fp, "%d", currentHour);
-      printf("\nsecure flash drive price downloaded: %d", items[0].price[currentHour]);
+      fprintf(fp, "%d", currentHour);//saves the current hour to currentHour.txt
       currentHour++;
-      printf("\nSuccessfully logged the price this hour!");
+
       fclose(fp);
+      printf("\nSuccessfully logged the price this hour!");
     }
 
 
     fp = fopen("userinput.txt", "r");
 
-    char userInput[50];
-    if (fscanf(fp,"%s",&userInput) != EOF) {
+    char userInput[50];//stores the contents of userInput.txt
+
+    if (fscanf(fp,"%s",&userInput) != EOF) {//if the file is not empty
 
         fclose(fp);
         searching++;
 
         mergeSort(items, 0, 2157);
+        printDatabase(items);
 
-        item *current = &items[binarySearch(items, userInput)];
-
+        item *current = &items[binarySearch(items, userInput)];//current item the user selected
         printf("\nThe item I found is: %s", current->name);
+
         fp = fopen("programoutput.txt", "w");
-        for (int i = 0; i < 24; i++) {
-          fprintf(fp, "%d\n", current->price[i]);
-        }
-        fclose(fp);
+        printPriceToFile(current);//prints prices to programoutput.txt
         free(current);
 
-        fp = fopen("userinput.txt", "w");//deletes user input
+        fclose(fp);
 
-        //must create a new token every day probably through scheduled python event
+        fp = fopen("userinput.txt", "w");//deletes user input
     }
 
     fclose(fp);

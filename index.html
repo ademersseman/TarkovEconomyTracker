@@ -126,7 +126,7 @@
   </style>
   </head>
   <body>
-
+<!--buttons-->
 <div style="padding-left:16px" class="topnav">
   <form action="http://localhost:8000/getinput" method="POST">
       <input type="text" class="text" name="input" id="input" placeholder="search..">
@@ -151,19 +151,18 @@
 
     function drawChart() {
       var xhr = new XMLHttpRequest();
-      // we defined the xhr
       xhr.open('GET', "http://localhost:8000/getprice", true);
       xhr.send();
 
       xhr.onreadystatechange = function () {
-        if (this.readyState != 4) return;
+        if (this.readyState != 4) return;//if done exit function
 
-          if (this.status == 200) {
-            // we get the returned data
+          if (this.status == 200) {//if connection to server is successful
 
             const contents = this.responseText.split("\n");
             //const contents = contents.split("\n");
 
+            //moves arround elements in list to make sure that contents[0] is the most recent read
             var left = 0;
             var right = contents[24];
             while(left < right) {
@@ -183,6 +182,7 @@
               right--;
             }
 
+            //is the data points for the graph
               var data = google.visualization.arrayToDataTable([
                 ['Hour', 'Previously'],
                 ['t', parseInt(contents[0])],
@@ -211,6 +211,7 @@
                 ['t-23', parseInt(contents[23])],
               ]);
 
+              //sets the options for the chart
               var options = {
                 vAxis: {title: "Price in ₽"},
                 hAxis: {title: "Time since search"},
@@ -229,12 +230,11 @@
 
               var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
 
+              //draws chart
               chart.draw(data, options);
 
             }
           };
-
-          // end of state change: it can be after some time (async)
       }
   </script>
 

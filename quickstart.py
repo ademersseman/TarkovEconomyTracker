@@ -1,3 +1,4 @@
+# this code was taken and modiffied from the google sheets api quickstart on github:https://github.com/googleworkspace/python-samples/blob/master/sheets/quickstart/quickstart.py
 from __future__ import print_function
 import os.path
 import time
@@ -56,4 +57,4 @@ while True:
     if __name__ == '__main__':
         print('I updated hourlyprice.txt')
         main()
-    time.sleep(3)
+    time.sleep(3600)
